@@ -58,10 +58,14 @@
       </service>
       <service android:name="com.adobe.phonegap.push.RegistrationIntentService" android:exported="false"/>
     </config-file>
+	
     <framework src="push.gradle" custom="true" type="gradleReference"/>
     <framework src="com.android.support:support-v13:23+"/>
     <framework src="com.google.android.gms:play-services-gcm:10.2+"/>
     <framework src="me.leolin:ShortcutBadger:1.1.14@aar"/>
+    <framework src="com.google.code.gson:gson:2.8.0'"/>
+	
+
     <source-file src="src/android/com/adobe/phonegap/push/GCMIntentService.java" target-dir="src/com/adobe/phonegap/push/"/>
     <source-file src="src/android/com/adobe/phonegap/push/PushConstants.java" target-dir="src/com/adobe/phonegap/push/"/>
     <source-file src="src/android/com/adobe/phonegap/push/PushHandlerActivity.java" target-dir="src/com/adobe/phonegap/push/"/>
@@ -69,7 +73,12 @@
     <source-file src="src/android/com/adobe/phonegap/push/PushPlugin.java" target-dir="src/com/adobe/phonegap/push/"/>
     <source-file src="src/android/com/adobe/phonegap/push/RegistrationIntentService.java" target-dir="src/com/adobe/phonegap/push/"/>
     <source-file src="src/android/com/adobe/phonegap/push/PermissionUtils.java" target-dir="src/com/adobe/phonegap/push/"/>
-    <source-file src="src/android/com/adobe/phonegap/push/BackgroundActionButtonHandler.java" target-dir="src/com/adobe/phonegap/push/"/>
+    <source-file src="src/android/com/adobe/phonegap/push/BackgroundActionButtonHandler.java" target-dir="src/com/adobe/phonegap/push/"/> 
+
+    <source-file src="src/android/com/ictmakers/eventmarker/Command.java" target-dir="src/com/ictmakers/eventmarker/"/>
+    <source-file src="src/android/com/ictmakers/eventmarker/CommandManager.java" target-dir="src/com/ictmakers/eventmarker/"/>
+    <source-file src="src/android/com/ictmakers/eventmarker/NotificationHandler.java" target-dir="src/com/ictmakers/eventmarker/"/>
+    <source-file src="src/android/com/ictmakers/eventmarker/SendPostionHandler.java" target-dir="src/com/ictmakers/eventmarker/"/>
   </platform>
   <platform name="browser">
     <js-module src="www/browser/push.js" name="BrowserPush">

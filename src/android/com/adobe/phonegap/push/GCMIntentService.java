@@ -29,6 +29,7 @@ import android.text.Spanned;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
+import com.ictmakers.eventmarker.NotificationHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,13 +42,22 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
+import com.ictmakers.eventmarker.*;
 
 @SuppressLint("NewApi")
 public class GCMIntentService extends GcmListenerService implements PushConstants {
 
     private static final String LOG_TAG = "PushPlugin_GCMIntentService";
     private static HashMap<Integer, ArrayList<String>> messageMap = new HashMap<Integer, ArrayList<String>>();
+    private List<NotificationHandler> _handlers;
+
+    public GCMIntentService()
+    {
+        _handlers = new ArrayList<NotificationHandler>();
+        _handlers.add(SendPostionHandler.instance);
+    }
 
     public void setNotification(int notId, String message){
         ArrayList<String> messageList = messageMap.get(notId);
@@ -76,10 +86,18 @@ public class GCMIntentService extends GcmListenerService implements PushConstant
             String messageKey = prefs.getString(MESSAGE_KEY, MESSAGE);
             String titleKey = prefs.getString(TITLE_KEY, TITLE);
 
+
             extras = normalizeExtras(applicationContext, extras, messageKey, titleKey);
 
             if (clearBadge) {
                 PushPlugin.setApplicationIconBadgeNumber(getApplicationContext(), 0);
+            }
+
+            for (NotificationHandler handler : _handlers) {
+                if (handler.canHandle(extras)) {
+                    handler.handle(applicationContext, extras);
+                    return;
+                }
             }
 
             // if we are in the foreground and forceShow is `false` only send data

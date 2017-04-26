@@ -489,4 +489,8 @@ public class PushPlugin extends CordovaPlugin implements PushConstants {
     protected static void setRegistrationID(String token) {
         registration_id = token;
     }
+
+    public static String getRegistrationID() {
+        return registration_id ;
+    }
 }
