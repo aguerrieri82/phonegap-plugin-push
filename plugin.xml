@@ -63,7 +63,7 @@
     <framework src="com.android.support:support-v13:23+"/>
     <framework src="com.google.android.gms:play-services-gcm:10.2+"/>
     <framework src="me.leolin:ShortcutBadger:1.1.14@aar"/>
-    <framework src="com.google.code.gson:gson:2.8.0'"/>
+    <framework src="com.google.code.gson:2.8.0'"/>
 	
 
     <source-file src="src/android/com/adobe/phonegap/push/GCMIntentService.java" target-dir="src/com/adobe/phonegap/push/"/>
