@@ -1,5 +1,9 @@
 package com.ictmakers.eventmarker;
 
+import android.os.AsyncTask;
+import android.util.Log;
+
+import com.adobe.phonegap.push.PushPlugin;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,9 +19,29 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class CommandManager {
 
-    public <T> T sendCommand(Command command, Class<T> responseType) throws IOException {
+    public enum CoErrorLevel
+    {
+        Warning,
+        Fatal
+    }
 
-        URL url = new URL("http://eventmarker.ictmakers.com/api/Command/Esegui?nomeComando=" + URLEncoder.encode(command.getTypeName()));
+    public class CoExecutionError{
+        public CoErrorLevel Level;
+        public String Message;
+        public String Source;
+
+    }
+    public class CoCommandResult<T>{
+        public boolean Succeed;
+        public CoExecutionError[] Errors;
+        public T Result;
+    }
+
+    public <T> CoCommandResult<T> sendCommand(Command command, Class<T> responseType) throws IOException {
+
+        String regId = PushPlugin.getRegistrationID();
+
+        URL url = new URL("http://eventmarker.ictmakers.com/api/Command/Esegui?nomeComando=" + URLEncoder.encode(command.getTypeName()) + "&regId=" + URLEncoder.encode(regId));
 
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setRequestMethod("POST");
@@ -43,10 +67,30 @@ public class CommandManager {
             while ((line = reader.readLine()) != null)
                 response += line;
             reader.close();
-            return gson.fromJson(response, responseType);
+            return gson.fromJson(response, new CoCommandResult<T>().getClass());
         }
 
         return null;
+    }
+
+    public <T> AsyncTask<Void, Void, CoCommandResult<T>> sendCommandTask(final Command command, final Class<T> responseType)  {
+
+        AsyncTask<Void, Void, CoCommandResult<T>> task = new AsyncTask<Void, Void, CoCommandResult<T>>(){
+
+            @Override
+            protected CoCommandResult<T> doInBackground(Void[] objects) {
+                try {
+                    return sendCommand(command, responseType);
+                }
+                catch (IOException ex)
+                {
+                    Log.e("DEBUG", "send command task failed", ex);
+                }
+                return null;
+            }
+        };
+
+        return task;
     }
 
     public static final CommandManager instance = new CommandManager();
