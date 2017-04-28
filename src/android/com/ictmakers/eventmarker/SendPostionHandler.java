@@ -29,11 +29,14 @@ public class SendPostionHandler implements NotificationHandler, GoogleApiClient.
     }
 
     public boolean canHandle(Bundle extras) {
-        String msg = extras.getString(PushConstants.MESSAGE);
-        return  msg.equals("GetPosition");
+        String info = extras.getString("info");
+        Log.d("SendPosition", "info: " + info);
+        return info != null && info.equals("GetPosition");
     }
 
     public void handle(Context context, Bundle extras) {
+
+        CommandManager.instance.setAccessToken(extras.getString("accessToken"));
 
         mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
@@ -52,7 +55,7 @@ public class SendPostionHandler implements NotificationHandler, GoogleApiClient.
 
             if (currentLocation != null) {
 
-                Log.d("DEBUG", "current location: " + currentLocation.toString());
+                Log.d("SendPosition", "Current location: " + currentLocation.toString());
 
                 String regId = PushPlugin.getRegistrationID();
                 SetPosizioneUtente command = new SetPosizioneUtente();
@@ -63,7 +66,7 @@ public class SendPostionHandler implements NotificationHandler, GoogleApiClient.
                 CommandManager.instance.sendCommandTask(command, Boolean.TYPE).execute();
             }
             else
-                Log.d("DEBUG", "no location");
+                Log.d("SendPosition", "no location");
         }
         catch (SecurityException ex){
             Log.e("DEBUG", "Get position failed", ex);

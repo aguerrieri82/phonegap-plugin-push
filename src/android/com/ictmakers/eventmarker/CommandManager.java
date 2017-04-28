@@ -19,6 +19,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class CommandManager {
 
+    String mAccessToken;
+
     public enum CoErrorLevel
     {
         Warning,
@@ -37,11 +39,19 @@ public class CommandManager {
         public T Result;
     }
 
+    public  void setAccessToken(String value){
+        mAccessToken = value;
+        Log.d("CommandManager", "accessToken: " +  mAccessToken);
+    }
+
     public <T> CoCommandResult<T> sendCommand(Command command, Class<T> responseType) throws IOException {
 
         String regId = PushPlugin.getRegistrationID();
 
-        URL url = new URL("http://eventmarker.ictmakers.com/api/Command/Esegui?nomeComando=" + URLEncoder.encode(command.getTypeName()) + "&regId=" + URLEncoder.encode(regId));
+        Log.d("CommandManager", "regId: " +  regId);
+
+
+        URL url = new URL("http://eventmarker.ictmakers.com/api/Command/Esegui?nomeComando=" + URLEncoder.encode(command.getTypeName()) + "&accessToken=" + URLEncoder.encode(mAccessToken));
 
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setRequestMethod("POST");
@@ -49,7 +59,6 @@ public class CommandManager {
         urlConnection.setUseCaches(false);
         urlConnection.setDoInput(true);
         urlConnection.setDoOutput(true);
-
         OutputStream stream = urlConnection.getOutputStream();
         Gson gson = new Gson();
         String commandJson = gson.toJson(command);
